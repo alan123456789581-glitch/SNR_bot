@@ -14,8 +14,9 @@
 | 版本 | 筆數 | 勝率 | 毛均 R | 淨均 R |
 |---|---|---|---|---|
 | 基準 | 1763 | 31.7% | −0.049 | −0.247 |
-| 假設一:位置限制 | (待補) | (待補) | (待補) | (待補) |
 | 假設二:4H 方向 24 小時內有效 | 650 | 33.5% | +0.006 | −0.192 |
+
+假設一(位置限制)同樣沒有改善,數據見 [`experiments.md`](experiments.md)。
 
 **結論:** 手續費每筆約 0.2R,而毛期望值約為 0,因此扣費後為負。這組規則在 BTC 永續合約 5 分鐘進場上,沒有扣完手續費仍能獲利的優勢。
 詳細的假設、成功標準與每次實驗的數據見 [`experiments.md`](experiments.md)。
@@ -30,24 +31,34 @@
 ## 專案結構
 
 ```
-(請依你的實際資料夾調整)
 ├── README.md
-├── experiments.md      # 各假設與實驗結果
-├── backtest/           # 回測引擎
-├── bot/                # ccxt 交易機器人(Demo Trading)
-├── tests/              # 單元測試
-├── .env.example        # 環境變數範例(不含真實金鑰)
-└── requirements.txt
+├── experiments.md                # 各假設、成功標準與實驗結果
+├── snr_strategy.py               # 策略邏輯(4H 方向 + 5M 進場訊號)
+├── backtest_snr.py               # 回測
+├── backtest_sensitivity.py       # 參數敏感度分析
+├── compare_live_vs_backtest.py   # Demo 實盤紀錄與回測的比對
+├── snr_bot.py                    # ccxt 交易機器人(Demo Trading)
+├── test_expiry.py                # 4H 方向有效期限的測試
+└── .gitignore
 ```
 
 ## 安裝與執行
 
 ```bash
 pip install -r requirements.txt
-cp .env.example .env     # 填入自己的幣安 Demo API 金鑰
 ```
 
-(請補上實際的回測與機器人執行指令)
+機器人從環境變數讀取金鑰,請在專案根目錄建立 `.env`(不會被上傳):
+
+```
+BINANCE_API_KEY=your_key_here
+BINANCE_API_SECRET=your_secret_here
+```
+
+```bash
+python backtest_snr.py     # 跑回測
+python snr_bot.py          # 啟動機器人(僅限 Demo Trading)
+```
 
 ## 注意事項
 
